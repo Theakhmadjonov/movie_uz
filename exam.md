@@ -15,14 +15,6 @@ email: VARCHAR(100) UNIQUE
 password_hash: VARCHAR(255)
 role: ENUM('user', 'admin', 'superadmin') DEFAULT 'user'
 avatar_url: VARCHAR(255)
-created_at: TIMESTAMP DEFAULT NOW()
-```
-
-### Profiles jadval
-
-```
-id: UUID PRIMARY KEY
-user_id: UUID FOREIGN KEY REFERENCES users(id)
 full_name: VARCHAR(100)
 phone: VARCHAR(20)
 country: VARCHAR(50)
