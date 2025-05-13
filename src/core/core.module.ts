@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { DatabaseMOdule } from './database/database.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -13,6 +14,16 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     ServeStaticModule.forRoot({
       rootPath: './uploads',
     }),
+    JwtModule.registerAsync({
+        global: true,
+        useFactory: async (configService: ConfigService) => ({
+          secret: configService.get<string>('JWT_SECRET'),
+          signOptions: {
+            expiresIn: '1h',
+          },
+          inject: [ConfigService],
+        }),
+      }),
   ],
   exports: [],
 })

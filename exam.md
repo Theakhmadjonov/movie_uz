@@ -220,48 +220,6 @@ last_watched: TIMESTAMP DEFAULT NOW()
      ```
    - Cookie: `auth_token` tozalanadi
 
-### Profil
-
-1. **GET /api/profile**
-
-   - Response:
-     ```json
-     {
-       "success": true,
-       "data": {
-         "user_id": "550e8400-e29b-41d4-a716-446655440000",
-         "full_name": "Aliyev Vali",
-         "phone": "+998901234567",
-         "country": "Uzbekistan",
-         "created_at": "2025-05-12T14:30:45Z",
-         "avatar_url": "https://example.com/avatars/alijon.jpg"
-       }
-     }
-     ```
-
-2. **PUT /api/profile**
-   - Request:
-     ```json
-     {
-       "full_name": "Aliyev Valijon",
-       "phone": "+998901234567",
-       "country": "Uzbekistan"
-     }
-     ```
-   - Response:
-     ```json
-     {
-       "success": true,
-       "message": "Profil muvaffaqiyatli yangilandi",
-       "data": {
-         "user_id": "550e8400-e29b-41d4-a716-446655440000",
-         "full_name": "Aliyev Valijon",
-         "phone": "+998901234567",
-         "country": "Uzbekistan",
-         "updated_at": "2025-05-12T15:45:30Z"
-       }
-     }
-     ```
 
 ### Obunalar
 
