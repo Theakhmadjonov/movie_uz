@@ -1,11 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseInterceptors,
+  UploadedFile,
+  Req,
+} from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
+
+  @Post('create')
+  @UseInterceptors(FileInterceptor('image'))
+  async addUser(@Body() body: any, @UploadedFile() file: Express.Multer.File, @Req() req: Request) {
+    const fileName = req['fileName'];
+  }
 
   @Post()
   create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
@@ -23,7 +42,10 @@ export class SubscriptionsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSubscriptionDto: UpdateSubscriptionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateSubscriptionDto: UpdateSubscriptionDto,
+  ) {
     return this.subscriptionsService.update(+id, updateSubscriptionDto);
   }
 
