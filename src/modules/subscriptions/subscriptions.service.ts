@@ -3,13 +3,13 @@ import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 
 @Injectable()
-export class SubscriptionService {
+export class SubscriptionsService {
   create(createSubscriptionDto: CreateSubscriptionDto) {
     return 'This action adds a new subscription';
   }
 
   findAll() {
-    return `This action returns all subscription`;
+    return `This action returns all subscriptions`;
   }
 
   findOne(id: number) {
