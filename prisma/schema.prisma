@@ -23,6 +23,7 @@ model User {
   reviews       Review[]
   watchHistory  WatchHistory[]
   movies Movie[]   
+  @@map("users")
 }
 
 enum Role {
@@ -39,6 +40,7 @@ model SubscriptionPlan {
   features     Json
   isActive     Boolean  @default(true) 
   userSubscriptions UserSubscription[]
+  @@map("subscriptionPlans")
 }
 
 model UserSubscription {
@@ -53,7 +55,7 @@ model UserSubscription {
   user User @relation(fields: [userId], references: [id])
   plan SubscriptionPlan @relation(fields: [planId], references: [id])
   payments Payment[]
-
+  @@map("userSubscriptions")
 }
 
 enum SubscriptionStatus {
@@ -73,6 +75,7 @@ model Payment {
   externalTransactionId String? 
   createdAt            DateTime @default(now()) 
   userSubscription UserSubscription @relation(fields: [userSubscriptionId], references: [id])
+  @@map("payments")
 }
 
 enum PaymentMethod {
@@ -95,6 +98,7 @@ model Category {
   slug        String   @unique
   description String?
   movieCategories MovieCategory[]
+  @@map("categories")
 }
 
 model Movie {
@@ -116,7 +120,7 @@ model Movie {
   favorites       Favorite[]
   reviews         Review[]
   watchHistories  WatchHistory[]
-
+  @@map("movies")
 }
 
 enum SubscriptionType {
@@ -130,6 +134,7 @@ model MovieCategory {
   categoryId String  
   movie    Movie    @relation(fields: [movieId], references: [id])
   category Category @relation(fields: [categoryId], references: [id])
+  @@map("movieCategories")
 }
 
 model MovieFile {
@@ -139,6 +144,7 @@ model MovieFile {
   quality  VideoQuality
   language String  @default("uz")
   movie Movie @relation(fields: [movieId], references: [id])
+  @@map("movieFiles")
 }
 
 enum VideoQuality {
@@ -157,7 +163,7 @@ model Favorite {
   createdAt DateTime @default(now()) 
   user  User  @relation(fields: [userId], references: [id])
   movie Movie @relation(fields: [movieId], references: [id])
-
+  @@map("favorites")
 }
 
 model Review {
@@ -169,6 +175,7 @@ model Review {
   createdAt DateTime @default(now()) 
   user  User  @relation(fields: [userId], references: [id])
   movie Movie @relation(fields: [movieId], references: [id])
+  @@map("reviews")
 }
 
 model WatchHistory {
@@ -180,4 +187,5 @@ model WatchHistory {
   lastWatched       DateTime @default(now()) 
   user  User  @relation(fields: [userId], references: [id])
   movie Movie @relation(fields: [movieId], references: [id])
+  @@map("watchHistories")
 }

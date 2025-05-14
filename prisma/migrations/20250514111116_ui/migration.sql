@@ -17,7 +17,7 @@ CREATE TYPE "SubscriptionType" AS ENUM ('free', 'premium');
 CREATE TYPE "VideoQuality" AS ENUM ('p240', 'p360', 'p480', 'p720', 'p1080', 'p4K');
 
 -- CreateTable
-CREATE TABLE "User" (
+CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -29,11 +29,11 @@ CREATE TABLE "User" (
     "country" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "SubscriptionPlan" (
+CREATE TABLE "subscriptionPlans" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "price" DECIMAL(10,2) NOT NULL,
@@ -41,11 +41,11 @@ CREATE TABLE "SubscriptionPlan" (
     "features" JSONB NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT "SubscriptionPlan_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "subscriptionPlans_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "UserSubscription" (
+CREATE TABLE "userSubscriptions" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "planId" TEXT NOT NULL,
@@ -55,11 +55,11 @@ CREATE TABLE "UserSubscription" (
     "autoRenew" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "UserSubscription_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "userSubscriptions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Payment" (
+CREATE TABLE "payments" (
     "id" TEXT NOT NULL,
     "userSubscriptionId" TEXT NOT NULL,
     "amount" DECIMAL(10,2) NOT NULL,
@@ -69,21 +69,21 @@ CREATE TABLE "Payment" (
     "externalTransactionId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Category" (
+CREATE TABLE "categories" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "description" TEXT,
 
-    CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "categories_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Movie" (
+CREATE TABLE "movies" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -97,41 +97,41 @@ CREATE TABLE "Movie" (
     "createdById" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Movie_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "movies_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "MovieCategory" (
+CREATE TABLE "movieCategories" (
     "id" TEXT NOT NULL,
     "movieId" TEXT NOT NULL,
     "categoryId" TEXT NOT NULL,
 
-    CONSTRAINT "MovieCategory_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "movieCategories_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "MovieFile" (
+CREATE TABLE "movieFiles" (
     "id" TEXT NOT NULL,
     "movieId" TEXT NOT NULL,
     "fileUrl" TEXT NOT NULL,
     "quality" "VideoQuality" NOT NULL,
     "language" TEXT NOT NULL DEFAULT 'uz',
 
-    CONSTRAINT "MovieFile_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "movieFiles_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Favorite" (
+CREATE TABLE "favorites" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "movieId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Favorite_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "favorites_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Review" (
+CREATE TABLE "reviews" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "movieId" TEXT NOT NULL,
@@ -139,11 +139,11 @@ CREATE TABLE "Review" (
     "comment" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "WatchHistory" (
+CREATE TABLE "watchHistories" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "movieId" TEXT NOT NULL,
@@ -151,56 +151,56 @@ CREATE TABLE "WatchHistory" (
     "watchedPercentage" DECIMAL(65,30) NOT NULL,
     "lastWatched" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "WatchHistory_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "watchHistories_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Category_slug_key" ON "Category"("slug");
+CREATE UNIQUE INDEX "categories_slug_key" ON "categories"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Movie_slug_key" ON "Movie"("slug");
+CREATE UNIQUE INDEX "movies_slug_key" ON "movies"("slug");
 
 -- AddForeignKey
-ALTER TABLE "UserSubscription" ADD CONSTRAINT "UserSubscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "userSubscriptions" ADD CONSTRAINT "userSubscriptions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserSubscription" ADD CONSTRAINT "UserSubscription_planId_fkey" FOREIGN KEY ("planId") REFERENCES "SubscriptionPlan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "userSubscriptions" ADD CONSTRAINT "userSubscriptions_planId_fkey" FOREIGN KEY ("planId") REFERENCES "subscriptionPlans"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Payment" ADD CONSTRAINT "Payment_userSubscriptionId_fkey" FOREIGN KEY ("userSubscriptionId") REFERENCES "UserSubscription"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "payments" ADD CONSTRAINT "payments_userSubscriptionId_fkey" FOREIGN KEY ("userSubscriptionId") REFERENCES "userSubscriptions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Movie" ADD CONSTRAINT "Movie_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "movies" ADD CONSTRAINT "movies_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MovieCategory" ADD CONSTRAINT "MovieCategory_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "movieCategories" ADD CONSTRAINT "movieCategories_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "movies"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MovieCategory" ADD CONSTRAINT "MovieCategory_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "movieCategories" ADD CONSTRAINT "movieCategories_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MovieFile" ADD CONSTRAINT "MovieFile_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "movieFiles" ADD CONSTRAINT "movieFiles_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "movies"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Favorite" ADD CONSTRAINT "Favorite_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "favorites" ADD CONSTRAINT "favorites_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Favorite" ADD CONSTRAINT "Favorite_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "favorites" ADD CONSTRAINT "favorites_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "movies"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Review" ADD CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "reviews" ADD CONSTRAINT "reviews_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Review" ADD CONSTRAINT "Review_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "reviews" ADD CONSTRAINT "reviews_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "movies"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "WatchHistory" ADD CONSTRAINT "WatchHistory_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "watchHistories" ADD CONSTRAINT "watchHistories_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "WatchHistory" ADD CONSTRAINT "WatchHistory_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "watchHistories" ADD CONSTRAINT "watchHistories_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "movies"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
