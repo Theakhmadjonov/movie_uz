@@ -210,7 +210,7 @@ last_watched: TIMESTAMP DEFAULT NOW()
      ```
    - Cookie: `auth_token` o'rnatiladi
 
-3. **POST /api/auth/logout**
+3. **POST /api/auth/logout**  
    - Response:
      ```json
      {
@@ -261,7 +261,7 @@ last_watched: TIMESTAMP DEFAULT NOW()
          "card_holder": "ALIJON VALIYEV"
        }
      }
-     ```
+     ```  
    - Response:
      ```json
      {
@@ -332,7 +332,7 @@ last_watched: TIMESTAMP DEFAULT NOW()
      }
      ```
 
-2. **GET /api/movies/{slug}**
+2. **GET /api/movies/{slug}** 
 
    - Response:
      ```json
@@ -373,7 +373,7 @@ last_watched: TIMESTAMP DEFAULT NOW()
 
 ### Sevimlilar
 
-1. **GET /api/favorites**
+1. **GET /api/favorites** 
 
    - Response:
      ```json
@@ -468,7 +468,7 @@ last_watched: TIMESTAMP DEFAULT NOW()
 
 ### Admin paneli
 
-1. **GET /api/admin/movies**
+1. **GET /api/admin/movies**  
 
    - Response:
      ```json
