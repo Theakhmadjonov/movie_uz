@@ -19,5 +19,5 @@ export class GetMoviesDto {
 
   @IsOptional()
   @IsEnum(['free', 'premium'])
-  subscription_type: string;
+  subscription_type: any;
 }

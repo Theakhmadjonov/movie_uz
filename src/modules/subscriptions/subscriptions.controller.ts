@@ -28,16 +28,16 @@ export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
   @Get('plans')
-  getPlans() {
-    return this.subscriptionService.getActivePlans();
+  async getPlans() {
+    return await this.subscriptionService.getActivePlans();
   }
 
   @UseGuards(RoleGuard)
   @SetMetadata('roles', ['admin', 'superadmin'])
   @Get('plans/all')
-  getAllPlans() {
+  async getAllPlans() {
     try {
-      return this.subscriptionService.getAllPlans();
+      return await this.subscriptionService.getAllPlans();
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -46,9 +46,9 @@ export class SubscriptionController {
   @UseGuards(RoleGuard)
   @SetMetadata('roles', ['admin', 'superadmin'])
   @Post('plans')
-  createPlan(@Body() dto: CreateSubscriptionPlanDto) {
+  async createPlan(@Body() dto: CreateSubscriptionPlanDto) {
     try {
-      return this.subscriptionService.createPlan(dto);
+      return await this.subscriptionService.createPlan(dto);
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -61,7 +61,7 @@ export class SubscriptionController {
   ) {
     try {
       const userId = req['userId'];
-      return this.subscriptionService.purchaseSubscription(userId, dto);
+      return await this.subscriptionService.purchaseSubscription(userId, dto);
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -70,9 +70,9 @@ export class SubscriptionController {
   @UseGuards(RoleGuard)
   @SetMetadata('roles', ['admin', 'superadmin'])
   @Patch('plans/:id')
-  updatePlan(@Param('id') id: string, @Body() dto: UpdateSubscriptionPlanDto) {
+  async updatePlan(@Param('id') id: string, @Body() dto: UpdateSubscriptionPlanDto) {
     try {
-      return this.subscriptionService.updatePlan(id, dto);
+      return await this.subscriptionService.updatePlan(id, dto);
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -81,9 +81,9 @@ export class SubscriptionController {
   @UseGuards(RoleGuard)
   @SetMetadata('roles', ['admin', 'superadmin'])
   @Delete('plans/:id')
-  deletePlan(@Param('id') id: string) {
+  async deletePlan(@Param('id') id: string) {
     try {
-      return this.subscriptionService.deletePlan(id);
+      return await this.subscriptionService.deletePlan(id);
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -8,8 +8,8 @@ export class MoviesService {
 
   async getMovies(query: GetMoviesDto) {
     let { page, limit, category, search, subscription_type } = query;
-    page = Number(query.page) || 1;
-    limit = Number(query.limit) || 20;
+    page = Number(page) || 1;
+    limit = Number(limit) || 5;
     const offset = (page - 1) * limit;
     if (!search || !category || !subscription_type) {
       return {
@@ -17,41 +17,44 @@ export class MoviesService {
         message: 'Search, category, subscription_type are required.',
       };
     }
-    const movies = await this.prisma.$queryRaw`
-        SELECT
-            m.id,
-            m.title,
-            m.slug,
-            m."posterUrl",
-            m."releaseYear",
-            m.rating,
-            m."subscriptionType",
-                ARRAY_AGG(c.name) AS categories
-        FROM "movies" m
-            JOIN "movieCategories" mc ON m.id = mc."movieId"
-            JOIN "categories" c ON mc."categoryId" = c.id
-        WHERE
-            LOWER(m.title) LIKE LOWER('%' || ${search} || '%')
-            AND LOWER(c.name) = LOWER(${category})
-            AND m."subscriptionType" = ${subscription_type}
-        GROUP BY m.id
-        ORDER BY m."releaseYear" DESC
-            LIMIT ${limit}
-            OFFSET ${offset};
-    `;
-
-    const totalResult: any = await this.prisma.$queryRaw`
-    SELECT COUNT(DISTINCT m.id) AS total
-    FROM "movies" m
-    JOIN "movieCategories" mc ON m.id = mc."movieId"
-    JOIN "categories" c ON mc."categoryId" = c.id
-    WHERE
-      LOWER(m.title) LIKE LOWER('%' || ${search} || '%')
-      AND LOWER(c.name) = LOWER(${category})
-      AND m."subscriptionType" = ${subscription_type};
-  `;
-    const total = Number(totalResult[0]?.total || 0);
+    const movieWhereFilter = {
+      title: {
+        contains: search,
+      },
+      subscriptionType: subscription_type,
+      movieCategories: {
+        some: {
+          category: {
+            name: {
+              equals: category,
+            },
+          },
+        },
+      },
+    };
+    const total = await this.prisma.movie.count({
+      where: movieWhereFilter,
+    });
     const pages = Math.ceil(total / limit);
+    const movies = await this.prisma.movie.findMany({
+      where: movieWhereFilter,
+      include: {
+        movieCategories: {
+          include: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        releaseYear: 'desc',
+      },
+      skip: offset,
+      take: limit,
+    });
     return {
       success: true,
       data: {
@@ -104,10 +107,10 @@ export class MoviesService {
         subscription_type: movie.subscriptionType,
         view_count: movie.viewCount,
         is_favorite: true,
-        categories: movie.movieCategories.map((mc) => mc.category.name),
+        categories: movie.movieCategories,
         files,
         reviews: {
-          average_rating: Number(avgRating.toFixed(1)),
+          average_rating: Number(avgRating),
           count: movie.reviews.length,
         },
       },

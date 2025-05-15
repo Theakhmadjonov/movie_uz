@@ -5,10 +5,11 @@ import { CoreModule } from './core/core.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { MovieModule } from './modules/movie/movie.module';
+import { FavoriteModule } from './modules/favorite/favorite.module';
 
 
 @Module({
-  imports: [AuthModule, SubscriptionsModule, CoreModule, MovieModule],
+  imports: [AuthModule, SubscriptionsModule, CoreModule, MovieModule, FavoriteModule],
   controllers: [],
   providers: [
     {
