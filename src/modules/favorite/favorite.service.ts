@@ -1,6 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/core/database/prisma.service';
 
 @Injectable()
@@ -44,7 +42,50 @@ export class FavoriteService {
     };
   }
 
-  async addfavorite(userId: string, createFavoriteDto: CreateFavoriteDto) {}
+  async addfavorite(userId: string, movieId: string) {
+    const movie = await this.prisma.movie.findUnique({
+      where: { id: movieId },
+      select: { title: true },
+    });
+    if (!movie) {
+      throw new NotFoundException('Movie not found');
+    }
+    const favorite = await this.prisma.favorite.create({
+      data: {
+        userId,
+        movieId,
+      },
+    });
+    return {
+      success: true,
+      message: 'Movie added to favorites',
+      data: {
+        id: favorite.id,
+        movie_id: favorite.movieId,
+        movie_title: movie.title,
+        created_at: favorite.createdAt,
+      },
+    };
+  }
 
-  async deleteFavorite(userId: string, movieId: string) {}
+  async deleteFavorite(userId: string, movieId: string) {
+    const favorite = await this.prisma.favorite.findFirst({
+      where: {
+        userId,
+        movieId,
+      },
+    });
+    if (!favorite) {
+      throw new NotFoundException('Movie not found');
+    }
+    await this.prisma.favorite.delete({
+      where: {
+        id: favorite.id,
+      },
+    });
+    return {
+      success: true,
+      message: 'Movie deleted in favorites',
+    };
+  }
 }

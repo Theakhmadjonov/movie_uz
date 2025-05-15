@@ -12,8 +12,6 @@ import {
   Req,
 } from '@nestjs/common';
 import { FavoriteService } from './favorite.service';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
 import AuthGuard from 'src/common/guards/auth.guard';
 import { Request } from 'express';
 
@@ -33,10 +31,10 @@ export class FavoriteController {
   }
 
   @Post()
-  async addFavorite(@Body() createFavoriteDto: CreateFavoriteDto, @Req() req: Request) {
+  async addFavorite(@Body() movie_id: string, @Req() req: Request) {
     try {
       const userId = req['userId'];
-      const data = await this.favoriteService.addfavorite(userId, createFavoriteDto);
+      const data = await this.favoriteService.addfavorite(userId, movie_id);
       return data;
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
