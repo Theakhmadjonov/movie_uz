@@ -4,10 +4,11 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 import { CoreModule } from './core/core.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { MovieModule } from './modules/movie/movie.module';
 
 
 @Module({
-  imports: [AuthModule, SubscriptionsModule, CoreModule],
+  imports: [AuthModule, SubscriptionsModule, CoreModule, MovieModule],
   controllers: [],
   providers: [
     {

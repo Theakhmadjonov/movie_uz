@@ -70,7 +70,7 @@ model Payment {
   userSubscriptionId   String   
   amount               Decimal  @db.Decimal(10, 2)
   paymentMethod        PaymentMethod 
-  paymentDetails       Json     
+  paymentDetails       Json?    
   status               PaymentStatus
   externalTransactionId String? 
   createdAt            DateTime @default(now()) 

@@ -2,55 +2,90 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Patch,
-  Param,
   Delete,
-  UseInterceptors,
-  UploadedFile,
+  Param,
+  Body,
+  UseGuards,
+  SetMetadata,
+  HttpException,
+  HttpStatus,
   Req,
 } from '@nestjs/common';
-import { SubscriptionsService } from './subscriptions.service';
-import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { SubscriptionService } from './subscriptions.service';
+import AuthGuard from 'src/common/guards/auth.guard';
+import RoleGuard from 'src/common/guards/role.guard';
+import {
+  CreateSubscriptionPlanDto,
+  UpdateSubscriptionPlanDto,
+} from './dto/create-subscription.dto';
 import { Request } from 'express';
+import { PurchaseSubscriptionDto } from './dto/purchse-subs.dto';
 
-@Controller('subscriptions')
-export class SubscriptionsController {
-  constructor(private readonly subscriptionsService: SubscriptionsService) {}
+@Controller('api/subscription')
+@UseGuards(AuthGuard)
+export class SubscriptionController {
+  constructor(private readonly subscriptionService: SubscriptionService) {}
 
-  @Post('create')
-  @UseInterceptors(FileInterceptor('image'))
-  async addUser(@Body() body: any, @UploadedFile() file: Express.Multer.File, @Req() req: Request) {
-    const fileName = req['fileName'];
+  @Get('plans')
+  getPlans() {
+    return this.subscriptionService.getActivePlans();
   }
 
-  @Post()
-  create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
-    return this.subscriptionsService.create(createSubscriptionDto);
+  @UseGuards(RoleGuard)
+  @SetMetadata('roles', ['admin', 'superadmin'])
+  @Get('plans/all')
+  getAllPlans() {
+    try {
+      return this.subscriptionService.getAllPlans();
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.subscriptionsService.findAll();
+  @UseGuards(RoleGuard)
+  @SetMetadata('roles', ['admin', 'superadmin'])
+  @Post('plans')
+  createPlan(@Body() dto: CreateSubscriptionPlanDto) {
+    try {
+      return this.subscriptionService.createPlan(dto);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subscriptionsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateSubscriptionDto: UpdateSubscriptionDto,
+  @Post('purchase')
+  async purchaseSubscription(
+    @Req() req: Request,
+    @Body() dto: PurchaseSubscriptionDto,
   ) {
-    return this.subscriptionsService.update(+id, updateSubscriptionDto);
+    try {
+      const userId = req['userId'];
+      return this.subscriptionService.purchaseSubscription(userId, dto);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.subscriptionsService.remove(+id);
+  @UseGuards(RoleGuard)
+  @SetMetadata('roles', ['admin', 'superadmin'])
+  @Patch('plans/:id')
+  updatePlan(@Param('id') id: string, @Body() dto: UpdateSubscriptionPlanDto) {
+    try {
+      return this.subscriptionService.updatePlan(id, dto);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(RoleGuard)
+  @SetMetadata('roles', ['admin', 'superadmin'])
+  @Delete('plans/:id')
+  deletePlan(@Param('id') id: string) {
+    try {
+      return this.subscriptionService.deletePlan(id);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

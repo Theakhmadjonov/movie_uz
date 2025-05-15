@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { SubscriptionsService } from './subscriptions.service';
-import { SubscriptionsController } from './subscriptions.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
+import { SubscriptionService } from './subscriptions.service';
+import { SubscriptionController } from './subscriptions.controller';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { v4 as uuid } from 'uuid';
       }),
     }),
   ],
-  controllers: [SubscriptionsController],
-  providers: [SubscriptionsService],
+  controllers: [SubscriptionController],
+  providers: [SubscriptionService],
 })
 export class SubscriptionsModule {}
