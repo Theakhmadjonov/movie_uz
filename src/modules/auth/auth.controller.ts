@@ -5,10 +5,15 @@ import {
   Res,
   HttpException,
   HttpStatus,
+  UseGuards,
+  SetMetadata,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { LoginDto, RegisterDto } from './dto/create-auth.dto';
+import AuthGuard from 'src/common/guards/auth.guard';
+import RoleGuard from 'src/common/guards/role.guard';
 
 @Controller('api/auth')
 export class AuthController {
@@ -43,6 +48,18 @@ export class AuthController {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       return result;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('role')
+  @UseGuards(AuthGuard, RoleGuard)
+  @SetMetadata('roles', ['superadmin'])
+  async addRoleAdminForUser(@Body() userId: string) {
+    try {
+      const updatedRole = await this.authService.addRole(userId);
+      return updatedRole;
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }

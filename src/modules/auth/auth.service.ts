@@ -37,6 +37,14 @@ export class AuthService {
     };
   }
 
+  async addRole(userId: string) {
+    const updatedRole = await this.prisma.user.update({
+      where: { id: userId },
+      data: { role: 'admin' },
+    });
+    return updatedRole;
+  }
+
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
